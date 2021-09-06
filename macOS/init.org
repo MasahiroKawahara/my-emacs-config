@@ -1,3 +1,14 @@
+* TOC
+  - [[【セットアップ方法】][【セットアップ方法】]]
+  - [[基本設定][基本設定]]
+  - [[ディスプレイ、サウンド][ディスプレイ、サウンド]]
+  - [[フォント、エンコード][フォント、エンコード]]
+  - [[キー操作][キー操作]]
+  - [[ツール][ツール]]
+  - [[言語][言語]]
+  - [[Org-mode][Org-mode]]
+  - [[Huck][Huck]]
+  - [[End][End]]
 * 【セットアップ方法】
   - 「~/.emacs.d/init.el」を作成。以下内容を追加
     #+begin_example
@@ -293,22 +304,6 @@ locate PACKAGE."
 (global-set-key (kbd "C-l C-9") 'kmacro-end-macro) 
 (global-set-key (kbd "C-l C-,") 'kmacro-end-and-call-macro)      
      #+END_SRC
-*** aa
-    #+BEGIN_SRC emacs-lisp
-    
-    #+END_SRC
-*** aa
-    #+BEGIN_SRC emacs-lisp
-    
-    #+END_SRC
-*** aa
-    #+BEGIN_SRC emacs-lisp
-    
-    #+END_SRC
-*** aa
-    #+BEGIN_SRC emacs-lisp
-    
-    #+END_SRC
 * ツール
 ** ediff
    - [[https://w.atwiki.jp/ntemacs/pages/80.html][ediff をスマートに使うための設定 - NTEmacs @ ウィキ - atwiki（アットウィキ）]]
