@@ -175,3 +175,60 @@ M-x package-install yaml-mode
 ;; カスタムファイルの指定
 (setq custom-file "~/.emacs.d/custom.el")
 #+end_src
+
+* ディスプレイ、サウンド
+** テーマ
+[[https://github.com/bbatsov/zenburn-emacs][GitHub - bbatsov/zenburn-emacs: The Zenburn colour theme ported to Emacs]]
+#+begin_src emacs-lisp
+(load-theme 'zenburn t)
+#+end_src
+** モードライン
+[[https://ayatakesi.github.io/emacs/24.5/Optional-Mode-Line.html][GNU Emacs Manual(Japanese Translation): Optional Mode Line]]
+*** 行番号を表示する
+#+BEGIN_SRC emacs-lisp
+(column-number-mode t)
+#+END_SRC
+
+** フリンジ
+[[https://ayatakesi.github.io/emacs/24.5/Fringes.html][GNU Emacs Manual(Japanese Translation): Fringes]]
+*** 行表示 (org-modeが重たくなるため基本的にOFF)
+#+BEGIN_SRC emacs-lisp
+;; (global-linum-mode t)
+;; (set-face-attribute 'linum nil :foreground "#fe4b4b" :height 0.9)
+#+END_SRC
+
+** ツールバー
+[[https://ayatakesi.github.io/emacs/25.1/Tool-Bars.html][GNU Emacs Manual(Japanese Translation): Tool Bars]]
+*** 非表示にする
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+#+END_SRC
+** スタートアップ画面(scratch)
+*** 起動時の Emacsロゴ、メッセージを出さない
+[[https://ayatakesi.github.io/lispref/24.5/html/Startup-Summary.html][GNU Emacs Lisp Reference Manual: Startup Summary]]
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+#+END_SRC
+*** scratch バッファの初期メッセージを消す
+#+BEGIN_SRC emacs-lisp
+(setq initial-scratch-message "")
+#+END_SRC
+*** scratch バッファの状態を保存する
+#+BEGIN_SRC emacs-lisp
+(persistent-scratch-setup-default)
+#+END_SRC
+** サウンド
+*** メッセージ音を出さない
+#+BEGIN_SRC emacs-lisp
+(setq ring-bell-function 'ignore)
+#+END_SRC
+** 他装飾
+*** 空白文字を強調
+#+BEGIN_SRC emacs-lisp
+(setq-default show-trailing-whitespace t)
+#+END_SRC
+
+*** 対応する括弧のハイライト
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+#+END_SRC
