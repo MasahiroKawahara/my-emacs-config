@@ -107,8 +107,8 @@ M-x package-install yaml-mode
     ;;;; shell
     exec-path-from-shell
 
-    ;;;; theme
-    zenburn-theme
+    ;;;; face, theme
+    persistent-scratch zenburn-theme
 
     ;;;; git
     magit
@@ -232,3 +232,152 @@ M-x package-install yaml-mode
 #+BEGIN_SRC emacs-lisp
 (show-paren-mode t)
 #+END_SRC
+
+* フォント、エンコード
+** フォント・等幅設定
+[[https://memo.sugyan.com/entry/20120828/1346082898][フォント設定にface-font-rescale-alistを使う - すぎゃーんメモ]]
+[[http://extra-vision.blogspot.com/2016/07/emacs.html][Out of Dimension: Emacs のフォント設定を克服する]]
+#+BEGIN_SRC emacs-lisp
+; for ASCII
+(create-fontset-from-ascii-font
+ "Menlo-14:weight=normal:slant=normal"
+ nil
+ "menlokakugo")
+
+(set-fontset-font
+ "fontset-menlokakugo"
+ 'unicode
+ (font-spec :family "Hiragino Kaku Gothic ProN")
+ nil
+ 'append)
+
+(add-to-list 'default-frame-alist '(font . "fontset-menlokakugo"))
+(setq face-font-rescale-alist '(("Hiragino.*" . 1.2)))
+#+END_SRC
+** デフォルトエンコーディング
+#+BEGIN_SRC emacs-lisp
+(prefer-coding-system 'utf-8)
+(setq coding-system-for-write 'utf-8)
+#+END_SRC
+* 操作
+** 全般
+*** CUAモードを有効にする
+[[https://ayatakesi.github.io/emacs/24.5/CUA-Bindings.html#CUA-Bindings][GNU Emacs Manual(Japanese Translation): CUA Bindings]]
+- C-<return> :: cua-set-rectangle-mark
+#+begin_src emacs-lisp
+(cua-mode t)
+(setq cua-enable-cua-keys nil)
+#+end_src
+*** "¥" を "/" に変換する
+#+BEGIN_SRC emacs-lisp
+(define-key global-map [?¥] [?\\])
+#+END_SRC
+*** 行頭 C-k(kill-line) で行ごと削除する
+#+BEGIN_SRC emacs-lisp
+(setq kill-whole-line t)
+#+END_SRC
+*** 括弧の自動ペアリング
+#+begin_src emacs-lisp
+(electric-pair-mode 0)
+#+end_src
+*** 保存前に末尾の空白をすべて削除する
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Useless-Whitespace.html][Useless Whitespace (GNU Emacs Manual)]]
+#+begin_src emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+
+** キーバインド
+*** Command キー活用
+#+BEGIN_SRC emacs-lisp
+;; using Command as Alt
+(global-set-key (kbd "s-r") 'revert-buffer)
+(global-set-key (kbd "s-v") 'scroll-down)
+(global-set-key (kbd "s-f") 'right-word)
+(global-set-key (kbd "s-b") 'left-word)
+(global-set-key (kbd "s-x") 'counsel-M-x)
+(global-set-key (kbd "s-w") 'kill-ring-save)
+(global-unset-key (kbd "s-t"))
+#+END_SRC
+
+*** スクロールアップ、ダウン(C-v, M-v)
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-v") 'scroll-up)
+(global-set-key (kbd "M-v") 'scroll-down)
+#+END_SRC
+
+*** バックスペース(C-h)
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-h") 'delete-backward-char)
+#+END_SRC
+
+*** バッファを閉じる(C-x C-k)
+#+BEGIN_SRC emacs-lisp
+(defun my-kill-current-buffer ()
+  (interactive)
+  (kill-buffer (current-buffer)))
+(define-key global-map (kbd "C-x C-k") 'my-kill-current-buffer)
+#+END_SRC
+
+*** ウィンドウ切替(C-x C-o)
+#+BEGIN_SRC emacs-lisp
+;; ※ C-x o と同じ
+(global-set-key (kbd "C-x C-o") 'other-window)
+#+END_SRC
+*** C-l 活用
+**** C-l(recenter) 解除
+#+BEGIN_SRC emacs-lisp
+(global-unset-key (kbd "C-l"))
+#+END_SRC
+**** C-l C-c --> 画面中央移動
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-l C-c") 'recenter)
+#+END_SRC
+**** C-l C-l --> 文字列置換
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-l C-l") 'replace-string)
+#+END_SRC
+**** C-l C-p --> 文字列置換(正規表現)
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-l C-p") 'replace-regexp)
+#+END_SRC
+**** C-l C-o --> ウィンドウ切替
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-l C-o") 'other-window)
+#+END_SRC
+**** C-l C-b --> バッファ切替
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-l C-b") 'switch-to-buffer)
+#+END_SRC
+**** C-l C-f --> 全バッファ文字列検索
+#+BEGIN_SRC emacs-lisp
+(defun multi-occur-in-matching-all-buffers(reg)
+  (interactive "sstring: ")
+  (multi-occur-in-matching-buffers ".*" reg)
+)
+(global-set-key (kbd "C-l C-f") 'multi-occur-in-matching-all-buffers)
+#+END_SRC
+**** C-l C-[8/9/,] --> マクロ
+#+BEGIN_SRC emacs-lisp
+;; C-l C-8 > マクロ記録開始
+;; C-l C-9 > マクロ記録終了
+;; C-l C-, > マクロ呼び出し
+(global-set-key (kbd "C-l C-8") 'kmacro-start-macro)
+(global-set-key (kbd "C-l C-9") 'kmacro-end-macro)
+(global-set-key (kbd "C-l C-,") 'kmacro-end-and-call-macro)
+#+END_SRC
+**** [ref] C-l C-m --> magit-status
+[[magit]]
+**** [ref] C-l C-s --> org-mode: クリップボード画像貼り付け
+[[org-mode: クリップボード画像貼り付け(C-l C-s)]]
+**** [ref] C-l ! --> org-mode: org-time-stamp-inactive
+[[タイムスタンプ: org-time-stamp-inactive (C-l !)]]
+**** [ref] C-l C-e C-m --> org-mode: org-md-export-as-markdown
+[[Markdown変換: org-md-export-as-markdown(C-l C-e C-m)]]
+**** [ref] C-l C-7 --> コードブロック編集: org-edit-special
+[[コードブロック編集: org-edit-special (C-l C-7)]]
+*** [ref] Org-mode
+[[Org キーバインド]]
+*** [ref] counsel
+[[counsel]]
+*** [ref] company
+[[company]]
