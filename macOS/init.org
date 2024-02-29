@@ -48,7 +48,10 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
     company yasnippet
 
     ;;;; languages
-    markdown-mode terraform-mode yaml-mode
+    markdown-mode terraform-mode typescript-mode
+
+    ;;;; org-mode
+    org-bullets org-tree-slide org-roam org-roam-ui
     ))
 
 ;;;; my/favorite-packagesからインストールしていないパッケージをインストール
@@ -103,7 +106,6 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
 ;; カスタムファイルの指定
 (setq custom-file "~/.emacs.d/custom.el")
 #+end_src
-
 * ディスプレイ、サウンド
 ** テーマ
 [[https://github.com/bbatsov/zenburn-emacs][GitHub - bbatsov/zenburn-emacs: The Zenburn colour theme ported to Emacs]]
@@ -160,7 +162,6 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
 (show-paren-mode t)
 #+END_SRC
-
 * フォント、エンコード
 ** フォント・等幅設定
 [[https://memo.sugyan.com/entry/20120828/1346082898][フォント設定にface-font-rescale-alistを使う - すぎゃーんメモ]]
@@ -309,7 +310,6 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
 [[counsel]]
 *** [ref] company
 [[company]]
-
 * ツール
 ** ivy, counsel, swiper
 - [[https://oremacs.com/swiper/#introduction][Ivy User Manual]]
@@ -364,3 +364,487 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
 - [[https://github.com/jrblevin/markdown-mode][GitHub - jrblevin/markdown-mode: Emacs Markdown Mode]]
 - [[https://github.com/hcl-emacs/terraform-mode][GitHub - hcl-emacs/terraform-mode: Major mode of Terraform configuration file]]
 - [[https://github.com/emacs-typescript/typescript.el][GitHub - emacs-typescript/typescript.el: TypeScript-support for Emacs]]
+
+* Org-mode
+** 基本設定
+*** COMMENT Orgファイル表示を拡大する
+[[https://lioon.net/emacs-change-font-size-quickly/][Emacs：一発で文字サイズを変更する方法 | ライオーン]]
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook
+          (lambda ()
+            (text-scale-set 1)))
+#+end_src
+*** インデント調整
+#+begin_src emacs-lisp
+; 見出しをインデント
+(setq org-startup-indented t)
+(setq org-indent-indentation-per-level 1)
+; 説明付きリストのインデント
+(setq org-list-description-max-indent 5)
+#+end_src
+*** 見出しをデフォルトで展開しない
+#+begin_src emacs-lisp
+(setq org-startup-folded t)
+#+end_src
+*** リストをデフォルトで展開しない
+#+begin_src emacs-lisp
+(setq org-cycle-include-plain-lists 'integrate)
+#+end_src
+*** COMMENT リストの階層を変更する際に文字を変える
+[[https://yiufung.net/post/org-mode-hidden-gems-pt1/][Org-mode Hidden Gems - 01 Document Structure]]
+#+begin_src emacs-lisp
+(setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+")))
+#+end_src
+*** ファイルを開く際は同じウィンドウ上で開く
+#+begin_src emacs-lisp
+(setq org-link-frame-setup '((file . find-file)))
+#+end_src
+*** インデントのタブ無効化
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
+*** スピードコマンドを利用する
+[[https://qiita.com/takaxp/items/a5a3383d7358c58240d0][org-mode のキーバインド、その先 - Qiita]]
+#+begin_src emacs-lisp
+(setq org-use-speed-commands t)
+#+end_src
+**** COMMENT manual
+#+begin_quote
+Speed commands
+==============
+
+Outline Navigation
+------------------
+n   (org-speed-move-safe 'org-next-visible-heading)
+p   (org-speed-move-safe 'org-previous-visible-heading)
+f   (org-speed-move-safe 'org-forward-heading-same-level)
+b   (org-speed-move-safe 'org-backward-heading-same-level)
+F   org-next-block
+B   org-previous-block
+u   (org-speed-move-safe 'outline-up-heading)
+j   org-goto
+g   (org-refile '(4))
+
+Outline Visibility
+------------------
+c   org-cycle
+C   org-shifttab
+    org-display-outline-path
+s   org-toggle-narrow-to-subtree
+k   org-cut-subtree
+=   org-columns
+
+Outline Structure Editing
+-------------------------
+U   org-metaup
+D   org-metadown
+r   org-metaright
+l   org-metaleft
+R   org-shiftmetaright
+L   org-shiftmetaleft
+i   (progn (forward-char 1) (call-interactively 'org-insert-heading-respect-content))
+^   org-sort
+w   org-refile
+a   org-archive-subtree-default-with-confirmation
+@   org-mark-subtree
+#   org-toggle-comment
+
+Clock Commands
+--------------
+I   org-clock-in
+O   org-clock-out
+
+Meta Data Editing
+-----------------
+t   org-todo
+,   (org-priority)
+0   (org-priority 32)
+1   (org-priority 65)
+2   (org-priority 66)
+3   (org-priority 67)
+:   org-set-tags-command
+e   org-set-effort
+E   org-inc-effort
+W   (lambda (m) (interactive "sMinutes before warning: ") (org-entry-put (point) "APPT_WARNTIME" m))
+
+Agenda Views etc
+----------------
+v   org-agenda
+/   org-sparse-tree
+
+Misc
+----
+o   org-open-at-point
+?   org-speed-command-help
+<   (org-agenda-set-restriction-lock 'subtree)
+>   (org-agenda-remove-restriction-lock)
+#+end_quote
+*** 省略エリア(...)の編集防止
+[[https://yiufung.net/post/org-mode-hidden-gems-pt1/][Org-mode Hidden Gems - 01 Document Structure]]
+#+begin_src emacs-lisp
+(setq org-catch-invisible-edits 'show-and-error)
+#+end_src
+*** コードブロック ショートカット有効化
+[[https://orgmode.org/manual/Structure-Templates.html][Structure Templates (The Org Manual)]]
+#+begin_src emacs-lisp
+(require 'org-tempo)
+#+end_src
+** Org キーバインド
+*** 改行(C-j or C-m) の挙動調整
+#+begin_src emacs-lisp
+(define-key org-mode-map (kbd "C-j") 'org-return)
+(define-key org-mode-map (kbd "RET") 'org-return-and-maybe-indent)
+#+end_src
+*** org-capture (C-cc)
+#+begin_src emacs-lisp
+(global-set-key "\C-cc" 'org-capture)
+#+end_src
+*** org-agenda (C-ca)
+#+begin_src emacs-lisp
+(define-key global-map "\C-ca" 'org-agenda)
+#+end_src
+*** org-meta-return (M-m, s-m)
+#+begin_src emacs-lisp
+;; org-meta-return (= M-RET)
+(define-key org-mode-map (kbd "M-m") nil)
+(define-key org-mode-map (kbd "M-m") 'org-meta-return)
+(define-key org-mode-map (kbd "s-m") 'org-meta-return)
+#+end_src
+*** コードブロック編集: org-edit-special (C-l C-7)
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-l C-7") 'org-edit-special)
+#+END_SRC
+*** COMMENT タイムスタンプ
+[[https://orgmode.org/manual/Creating-Timestamps.html][Creating Timestamps (The Org Manual)]]
+#+BEGIN_SRC emacs-lisp
+;; org-time-stamp-inactive (flycheck 競合対策)
+(global-set-key (kbd "C-l !") 'org-time-stamp-inactive)
+#+END_SRC
+*** COMMENT Markdown変換: org-md-export-as-markdown(C-l C-e C-m)
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-l C-e C-m") 'org-md-export-as-markdown)
+#+end_src
+*** COMMENT 次見出し作成: org-insert-heading (C-S-ret)
+#+begin_src emacs-lisp
+(define-key org-mode-map (kbd "<C-S-return>") nil)
+(define-key org-mode-map (kbd "<C-S-return>") 'org-insert-heading)
+#+end_src
+*** COMMENT org-store-link (C-c l)
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-c l") 'org-store-link)
+#+end_src
+** Org Agenda
+*** アジェンダ対象ファイル設定
+#+begin_src emacs-lisp
+(setq org-directory "~/org/")
+(setq org-agenda-files (list org-directory))
+#+end_src
+*** tags 設定
+#+begin_src emacs-lisp
+(setq org-use-tag-inheritance nil)
+#+end_src
+
+*** TODOキーワード設定
+#+begin_src emacs-lisp
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "WAIT(w)" "TRET(e)" "DOIN(n)" "REMD(r)"
+              "|" "DONE(d)" "SKIP(x)")))
+(setq org-todo-keyword-faces
+      '(
+        ("WAIT" . (:foreground "CadetBlue2" :weight bold))
+        ("TODO" . (:foreground "LightGoldenrod1" :weight bold))
+        ("REMD" . (:foreground "PaleGreen3" :weight bold))
+        ("TRET" . (:foreground "honeydew3" :weight bold))
+        ("INFO" . (:foreground "honeydew3" :weight bold))
+        ; ("DOIN" . (:foreground "red" :background "yellow1" :weight bold))
+        ))
+#+end_src
+
+*** DONEとなった時間を記録しない
+#+begin_src emacs-lisp
+(setq org-log-done nil)
+;(setq org-log-done 'time)
+#+end_src
+
+*** DONEステータス時の見出しの色を変えない
+#+begin_src emacs-lisp
+(setq org-fontify-done-headline nil)
+#+end_src
+
+*** 同じウィンドウ上にアジェンダ表示
+#+begin_src emacs-lisp
+(setq org-agenda-window-setup 'current-window)
+#+end_src
+*** アジェンダ表示で下線を使用
+[[https://tamura70.hatenadiary.org/entry/20100208/org][Emacs org-modeを使ってみる: (6) アジェンダ表示 - 屯遁のパズルとプログラミングの日記]]
+#+begin_src emacs-lisp
+(add-hook 'org-agenda-mode-hook '(lambda () (hl-line-mode 1)))
+(setq hl-line-face 'underline)
+#+end_src
+*** 標準の祝日を利用しない
+[[https://tamura70.hatenadiary.org/entry/20100208/org][Emacs org-modeを使ってみる: (6) アジェンダ表示 - 屯遁のパズルとプログラミングの日記]]
+#+begin_src emacs-lisp
+(setq calendar-holidays nil)
+#+end_src
+** Org Capture
+#+begin_src emacs-lisp
+(setq org-capture-templates
+  '(
+     ("t" "Todo" entry (file+headline "~/org/remind.org" "REMIND")
+           "* REMD [#C] %? (wrote on %U)")
+        ("k" "Knowledge" entry (file+headline "~/org/knowledge.org" "TOP")
+           "* %?")
+  )
+)
+#+end_src
+** Org Babel
+*** タブ時にフォーマットしない
+#+begin_src emacs-lisp
+(setq org-src-tab-acts-natively nil)
+#+end_src
+*** コード実行時に confirm しない
+#+begin_src emacs-lisp
+(setq org-confirm-babel-evaluate nil)
+#+end_src
+*** 実行できる言語設定
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (emacs-lisp . t)
+   (shell . t)
+   )
+)
+#+END_SRC
+*** org-edit-src-exit 時にタブ整形しない
+#+begin_src emacs-lisp
+(setq org-src-preserve-indentation t)
+#+end_src
+** ツール
+*** org-bullets
+[[https://github.com/sabof/org-bullets][GitHub - sabof/org-bullets: utf-8 bullets for org-mode]]
+#+begin_src emacs-lisp
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+*** org-tree-slide
+[[https://qiita.com/takaxp/items/8dfb5d34dfcd79f9fa5c][org-modeのツリーでスライドショー - Qiita]]
+#+begin_src emacs-lisp
+(require 'org-tree-slide)
+(define-key org-mode-map (kbd "<f8>") 'org-tree-slide-mode)
+(define-key org-mode-map (kbd "S-<f8>") 'org-tree-slide-skip-done-toggle)
+(setq org-tree-slide-slide-in-effect nil)
+(setq org-tree-slide-header nil)
+#+end_src
+* Org-roam
+[[https://dev.classmethod.jp/articles/intro-zettelkasten-and-emacs-org-roam/][Emacs org-roam を使って Zettelkasten (ノート術)に入門する | DevelopersIO]]
+** general
+- C-c n f :: org-roam-node-find
+- C-c n i :: org-roam-node-insert
+- C-c n c :: org-roam-capture
+- C-c n a :: org-roam-alias-add
+- C-c n r :: org-roam-ref-add
+- C-c n t :: org-roam-buffer-toggle
+- C-c n d :: org-roam-dailies-goto-today
+- C-c n h :: org-id-get-create
+
+#+begin_src emacs-lisp
+; Org-roam ファイルを保存する場所
+(setq org-roam-directory "~/org-roam")
+
+; キャッシュの一貫性を維持するためにファイル変更時に関数を実行
+(org-roam-db-autosync-mode)
+
+; ノードが存在しない場合は作成し、そのノードにアクセス
+(global-set-key (kbd "C-c n f") 'org-roam-node-find)
+
+; ノードが存在しない場合はノードを作成し、ポイントにノードへのリンクを挿入
+(global-set-key (kbd "C-c n i") 'org-roam-node-insert)
+
+; ノードが存在しない場合はノードを作成し、終了時に現在のウィンドウ構成を復元する
+(global-set-key (kbd "C-c n c") 'org-roam-capture)
+
+; ノードに エイリアス を追加
+(global-set-key (kbd "C-c n a") 'org-roam-alias-add)
+
+; ノードに ROAM_REF を追加
+(global-set-key (kbd "C-c n r") 'org-roam-ref-add)
+
+; *org-roam* バッファーを表示
+(global-set-key (kbd "C-c n t") 'org-roam-buffer-toggle)
+; ; -- *org-roam* バッファーを表示方法の調整
+; (add-to-list 'display-buffer-alist
+;              '("\\*org-roam\\*"
+;                (display-buffer-in-direction)
+;                (direction . right)
+;                (window-width . 0.33)
+;                (window-height . fit-window-to-buffer)))
+
+; org-roam-dailies 設定
+(global-set-key (kbd "C-c n d") 'org-roam-dailies-goto-today)
+; (setq org-roam-dailies-directory "daily/") ; default
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :target (file+head "%<%Y-%m-%d>.org"
+                            "#+title: capture-%<%Y-%m-%d>\n"))))
+
+(global-set-key (kbd "C-c n h") 'org-id-get-create)
+#+end_src
+
+** org-roam-ui
+- [[https://github.com/org-roam/org-roam-ui][GitHub - org-roam/org-roam-ui: A graphical frontend for exploring your org-roam Zettelkasten]]
+* Crafting
+** COMMENT org-mode: クリップボード画像貼り付け(C-l C-s)
+file:~/scripts/emacs_screenshot.sh
+#+begin_src emacs-lisp
+(defun my-org-screenshot ()
+  (interactive) (call-process "emacs_screenshot.sh" nil t))
+(global-set-key (kbd "C-l C-s") 'my-org-screenshot)
+#+end_src
+*** script
+#+begin_src bash
+#!/bin/zsh
+fn_date=$(date "+%Y-%m-%d_%H-%M-%S")
+fn_rand=$RANDOM
+filename="${HOME}/org/img/sc_${fn_date}_${fn_rand}.png"
+
+pngpaste $filename
+pngquant --ext .png --force --speed 1 $filename
+
+echo "file+sys:${filename}"
+#+end_src
+
+** COMMENT org-mode: リンク貼り付け(C-l C-y [C-o/C-m])
+- file:~/scripts/clip_to_md_link.sh
+- file:~/scripts/clip_to_org_link.sh
+#+begin_src emacs-lisp
+(defun my-org-link-paste ()
+  (interactive) (call-process "clip_to_org_link.sh" nil t))
+(defun my-md-link-paste ()
+  (interactive) (call-process "clip_to_md_link.sh" nil t))
+
+(global-set-key (kbd "C-l C-y C-o") 'my-org-link-paste)
+(global-set-key (kbd "C-l C-y C-m") 'my-md-link-paste)
+#+end_src
+** COMMENT org-mode: YYYYMM を挿入する (C-l C-d)
+file:~/scripts/yyyymm.sh
+#+begin_src emacs-lisp
+(defun my-org-yyyymm ()
+  (interactive) (call-process "yyyymm.sh" nil t))
+
+(global-set-key (kbd "C-l C-d") 'my-org-yyyymm)
+#+end_src
+** org-mode: リンクURLをコピー (C-l C-w)
+[[https://hungyi.net/posts/copy-org-mode-url/][Easily Copy an Org-mode URL – Hung-Yi’s Journal]]
+#+begin_src emacs-lisp
+(defun my-org-retrieve-url-from-point ()
+  "Copies the URL from an org link at the point"
+  (interactive)
+  (let ((plain-url (url-get-url-at-point)))
+    (if plain-url
+        (progn
+          (kill-new plain-url)
+          (message (concat "Copied: " plain-url)))
+      (let* ((link-info (assoc :link (org-context)))
+             (text (when link-info
+                     (buffer-substring-no-properties
+                      (or (cadr link-info) (point-min))
+                      (or (caddr link-info) (point-max))))))
+        (if (not text)
+            (error "Oops! Point isn't in an org link")
+          (string-match org-link-bracket-re text)
+          (let ((url (substring text (match-beginning 1) (match-end 1))))
+            (kill-new url)
+            (message (concat "Copied: " url))))))))
+(global-set-key (kbd "C-l C-w") 'my-org-retrieve-url-from-point)
+#+end_src
+
+* End
+#+BEGIN_SRC emacs-lisp
+;; カレントディレクトリを ~/org に変更。
+(cd "~/org/")
+
+;; *scratch* バッファを org-modeに
+(org-mode)
+#+END_SRC
+
+* COMMENT Archives
+** COMMENT company
+- [[https://company-mode.github.io/][company-mode for Emacs]]
+[[https://qiita.com/blue0513/items/c0dc35a880170997c3f5][Emacsの補完と検索を超強化する - Qiita]]
+[[https://shwaka.github.io/2017/05/03/company-dabbrev-japanese.html][company-dabbrevで日本語を補完しない (若月駿)]]
+[[https://gist.github.com/tam17aki/28a07122aa943436514601530f7acbbb][init-company.el · GitHub]]
+
+#+BEGIN_SRC emacs-lisp
+(require 'company)
+(global-company-mode) ; 全バッファで有効にする
+(setq company-transformers '(company-sort-by-backend-importance)) ;; ソート順
+(setq company-idle-delay 0) ; デフォルトは0.5
+(setq company-minimum-prefix-length 2) ; デフォルトは4
+(setq company-selection-wrap-around t) ; 候補の一番下でさらに下に行こうとすると一番上に戻る
+; (setq completion-ignore-case nil)
+(setq company-dabbrev-downcase nil) ; lowercaseのみで補完されるのを抑制する(case sensitive)
+(setq company-require-match 'never) ; 補完候補に無い文字を打てるようにする
+(setq company-tooltip-align-annotations t) ;; ツールチップ上の候補を右揃え
+(global-set-key (kbd "C-M-i") 'company-complete)
+(define-key company-active-map (kbd "C-n") 'company-select-next) ;; C-n, C-pで補完候補を次/前の候補を選択
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-search-map (kbd "C-n") 'company-select-next)
+(define-key company-search-map (kbd "C-p") 'company-select-previous)
+(define-key company-active-map (kbd "C-s") 'company-filter-candidates) ;; C-sで絞り込む
+(define-key company-active-map (kbd "C-i") 'company-complete-selection) ;; TABで候補を設定
+(define-key company-active-map [tab] 'company-complete-selection) ;; TABで候補を設定
+(define-key company-active-map (kbd "C-f") 'company-complete-selection) ;; C-fで候補を設定
+(define-key emacs-lisp-mode-map (kbd "C-M-i") 'company-complete) ;; 各種メジャーモードでも C-M-iで company-modeの補完を使う
+
+;; yasnippetとの連携
+(defvar company-mode/enable-yas t
+  "Enable yasnippet for all backends.")
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+
+;; company-dabbrevで日本語を補完しない
+;; https://shwaka.github.io/2017/05/03/company-dabbrev-japanese.html
+(defun edit-category-table-for-company-dabbrev (&optional table)
+  (define-category ?s "word constituents for company-dabbrev" table)
+  (let ((i 0))
+    (while (< i 128)
+      (if (equal ?w (char-syntax i))
+      (modify-category-entry i ?s table)
+    (modify-category-entry i ?s table t))
+      (setq i (1+ i)))))
+(edit-category-table-for-company-dabbrev)
+;; (add-hook 'TeX-mode-hook 'edit-category-table-for-company-dabbrev) ; 下の追記参照
+(setq company-dabbrev-char-regexp "\\cs")
+
+;; for org-mode codings
+(add-to-list 'company-dabbrev-code-modes 'org-mode)
+(setq company-dabbrev-code-everywhere nil)
+(setq company-dabbrev-code-other-buffers nil)
+(setq company-dabbrev-code-ignore-case t)
+#+END_SRC
+** COMMENT corfu
+#+begin_src emacs-lisp
+(global-corfu-mode)
+(setq corfu-auto t)
+#+end_src
+
+** COMMENT yasnippet
+参考:
+- [[https://github.com/joaotavora/yasnippet][GitHub - joaotavora/yasnippet: A template system for Emacs]]
+- [[https://github.com/AndreaCrotti/yasnippet-snippets][GitHub - AndreaCrotti/yasnippet-snippets: a collection of yasnippet snippets for many languages]]
+#+BEGIN_SRC emacs-lisp
+ (add-to-list 'load-path
+               "~/.emacs.d/plugins/yasnippet")
+ (require 'yasnippet)
+ (setq yas-snippet-dirs
+       '(  "~/.emacs.d/snippets"                 ;; personal snippets
+         "~/.emacs.d/elpa/yasnippet-snippets-20231219.1505/snippets"
+         ))
+ (yas-global-mode 1)
+#+END_SRC
