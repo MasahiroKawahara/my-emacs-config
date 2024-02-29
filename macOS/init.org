@@ -257,7 +257,7 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
 (global-unset-key (kbd "C-l"))
 #+END_SRC
-**** C-l C-c --> 画面中央移動
+**** C-l C-c --> 画面中央移動 (本来の C-l)
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-l C-c") 'recenter)
 #+END_SRC
@@ -294,22 +294,6 @@ git clone https://github.com/AndreaCrotti/yasnippet-snippets
 (global-set-key (kbd "C-l C-9") 'kmacro-end-macro)
 (global-set-key (kbd "C-l C-,") 'kmacro-end-and-call-macro)
 #+END_SRC
-**** [ref] C-l C-m --> magit-status
-[[magit]]
-**** [ref] C-l C-s --> org-mode: クリップボード画像貼り付け
-[[org-mode: クリップボード画像貼り付け(C-l C-s)]]
-**** [ref] C-l ! --> org-mode: org-time-stamp-inactive
-[[タイムスタンプ: org-time-stamp-inactive (C-l !)]]
-**** [ref] C-l C-e C-m --> org-mode: org-md-export-as-markdown
-[[Markdown変換: org-md-export-as-markdown(C-l C-e C-m)]]
-**** [ref] C-l C-7 --> コードブロック編集: org-edit-special
-[[コードブロック編集: org-edit-special (C-l C-7)]]
-*** [ref] Org-mode
-[[Org キーバインド]]
-*** [ref] counsel
-[[counsel]]
-*** [ref] company
-[[company]]
 * ツール
 ** ivy, counsel, swiper
 - [[https://oremacs.com/swiper/#introduction][Ivy User Manual]]
